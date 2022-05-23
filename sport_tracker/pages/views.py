@@ -64,7 +64,7 @@ def create_match(request):
     form = MatchForm(request.user)
     if request.method == "POST":
         form = MatchForm(request.user, data=request.POST)
-        if form.is_valid():
+        if form.is_valid():  # todo clean this
             form_game = form.cleaned_data["game"]
             result = form.cleaned_data["result"]
             opponent = form.cleaned_data["opponent"]
@@ -89,7 +89,7 @@ def create_match(request):
 @login_required
 def show_stats(request):
     user = request.user
-    game_details = utils.get_user_details_in_each_game(user)
+    game_details = utils.get_user_details_in_each_game(user)  # todo refactor - no need to assign to variables
     all_matches = utils.get_user_played_matches_number(user)
     won_matches = utils.get_user_won_matches_number(user)
     lost_matches = utils.get_user_lost_matches_number(user)
