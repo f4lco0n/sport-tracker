@@ -1,0 +1,69 @@
+{% extends 'home.html' %}
+{% load bootstrap5 %}
+{% block title %}Komentarz do meczu{% endblock %}
+
+{% block game_subpage %}
+    <style>
+        .message-container {
+            border: 2px solid #dedede;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .message-container::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        .time-right {
+            float: right;
+            color: #aaa;
+        }
+    </style>
+    Wiadomość dla użytkownika: <b>{{ to_user.username }}</b>
+    <br/>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Gra</th>
+            <th>Wynik</th>
+            <th>Przeciwnik</th>
+            <th>Status</th>
+            <th>Zwyciezca</th>
+            <th>Data</th>
+            <th>Komentarz</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ rejection.match.game.name }}</td>
+            <td>{{ rejection.match.result }}</td>
+            <td>
+                {% if user == rejection.match.opponent %}
+                    {{ rejection.match.author }}
+                {% else %}
+                    {{ rejection.match.opponent }}
+                {% endif %}
+            </td>
+            <td>{{ rejection.status }}</td>
+            <td><b>{{ rejection.match.winner }}</b></td>
+            <td>{{ rejection.match.date }}</td>
+            <td>{{ rejection.comment }}</td>
+        </tbody>
+    </table>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Wyślij wiadomość"/>
+    </form>
+    {% for message in messages %}
+        <div class="message-container">
+            {{ message.message }}
+            <span class="time-right">{{ message.author }} : {{ message.date }}</span>
+        </div>
+    {% endfor %}
+{% endblock %}

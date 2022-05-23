@@ -1,0 +1,14 @@
+{% extends 'home.html' %}
+login
+{% block game_subpage %}
+
+        <form method="post" action="." enctype="multipart/form-data" class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p>
+            <input class="btn" type="submit" value="Login" />
+        </p>
+    </form>
+
+
+{% endblock %}

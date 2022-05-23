@@ -1,0 +1,14 @@
+{% extends 'home.html' %}
+register
+{% block game_subpage %}
+
+        <form method="post" action="." enctype="multipart/form-data" class="form-group">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <p>
+            <input class="btn" type="submit" value="register" />
+        </p>
+    </form>
+
+
+{% endblock %}

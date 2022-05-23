@@ -1,0 +1,86 @@
+{% extends 'home.html' %}
+{% load bootstrap5 %}
+{% block title %}
+    Statystyki
+{% endblock %}
+
+{% block game_subpage %}
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+    Wszystkie mecze: {{ all_matches }}<br/>
+    Mecze wygrane: {{ won_matches }}<br/>
+    Mecze przegrane: {{ lost_matches }}<br/>
+    Oczekujące potwierdzenia: {{ pending_confirmations }}
+
+    <hr>
+
+    <table class="table table-bordered">
+        <thead>Szczegóły każdej gry
+{#                <tr>#}
+{#                    <th>Gra</th>#}
+{#                    <th>Rozegrane</th>#}
+{#                    <th>Wygrane</th>#}
+{#                    <th>Przegrane</th>#}
+{#                    <th>Oczekujące</th>#}
+{#                </tr>#}
+        </thead>
+        <tbody>
+        {% for key, value in game_details.items %}
+            <tr>
+                <th>Gra</th>
+                <th>Rozegrane</th>
+                <th>Wygrane</th>
+                <th>Przegrane</th>
+                <th>Oczekujące</th>
+            </tr>
+            <tr>
+                <td>{{ key }} </td>
+                <td>{{ value.all }}</td>
+                <td>{{ value.win }}</td>
+                <td>{{ value.lost }}</td>
+                <td>{{ value.pending }}</td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <canvas id="myChart{{ key }}" width="200" height="200"></canvas>
+                    <script>
+                        const ctx{{ key }} = document.getElementById('myChart{{ key }}').getContext('2d');
+                        const myChart{{ key }} = new Chart(ctx{{ key }}, {
+                            type: 'doughnut',
+                            {#type: 'pie',#}
+                            data: {
+                                labels: ['Wygrane', 'Przegrane', "Oczekujące"],
+                                datasets: [{
+                                    label: '# of Votes',
+                                    data: [{{ value.win }}, {{ value.lost }}, {{ value.pending }}],
+                                    backgroundColor: [
+                                        'rgba(255, 99, 132, 0.2)',
+                                        'rgba(54, 162, 235, 0.2)',
+                                        'rgba(153, 102, 255, 0.2)',
+                                    ],
+                                    borderColor: [
+                                        'rgba(255, 99, 132, 1)',
+                                        'rgba(54, 162, 235, 1)',
+                                        'rgba(153, 102, 255, 1)',
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+{% endblock %}

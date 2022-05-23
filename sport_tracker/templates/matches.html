@@ -1,0 +1,96 @@
+{% extends 'home.html' %}
+{% load bootstrap5 %}
+{% block title %}
+    Twoje mecze
+{% endblock %}
+
+{% block game_subpage %}
+
+    {% include 'matches_item_actions.html' %}
+
+    <div class="well">
+        <bold>Moje mecze</bold>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Gra</th>
+            <th>Wynik</th>
+            <th>Przeciwnik</th>
+            <th>Status</th>
+            <th>Zwyciezca</th>
+            <th>Data</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for confirmation in confirmations %}
+            <tr style="color: green">
+                <td>
+                    {{ confirmation.match.game.name }}
+                </td>
+                <td>{{ confirmation.match.result }}</td>
+                <td>
+                    {% if user == confirmation.match.opponent %}
+                        {{ confirmation.match.author }}
+                    {% else %}
+                        {{ confirmation.match.opponent }}
+                    {% endif %}
+                </td>
+                <td>{{ confirmation.status }}</td>
+                <td>{{ confirmation.match.winner }}</td>
+                <td>{{ confirmation.match.date }}</td>
+            </tr>
+
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block game_subpage %}#}
+{#    <style>#}
+{#        table, th, td {#}
+{#            border: 1px solid #dddddd;#}
+{#            text-indent: initial;#}
+{#            text-align: center;#}
+{#            width: 100%;#}
+{#        }#}
+{##}
+{#    </style>#}
+{#    <table>#}
+{#        <thead>Twoje mecze#}
+{#        <tr>#}
+{#            <th>Gra</th>#}
+{#            <th>Wynik</th>#}
+{#            <th>Przeciwnik</th>#}
+{#            <th>Status</th>#}
+{#            <th>Zwyciezca</th>#}
+{#        </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{##}
+{#        {% for confirmation in confirmations %}#}
+{#            <tr style="color: green">#}
+{#                <td>#}
+{#                    {{ confirmation.match.game.name }}#}
+{#                </td>#}
+{#                <td>{{ confirmation.match.result }}</td>#}
+{#                <td>#}
+{#                    {% if user == confirmation.match.opponent %}#}
+{#                        {{ confirmation.match.author }}#}
+{#                    {% else %}#}
+{#                        {{ confirmation.match.opponent }}#}
+{#                    {% endif %}#}
+{#                </td>#}
+{#                <td>{{ confirmation.status }}</td>#}
+{#                <td>{{ confirmation.match.winner }}</td>#}
+{#            </tr>#}
+{##}
+{#        {% endfor %}#}
+{##}
+{#        </tbody>#}
+{##}
+{#    </table>#}
+{##}
+{#{% endblock %}#}

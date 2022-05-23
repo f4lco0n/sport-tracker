@@ -1,0 +1,105 @@
+{% extends 'home.html' %}
+{% load bootstrap5 %}
+{% block title %}
+    Potwierdzenia
+{% endblock %}
+
+{% block game_subpage %}
+    <div class="well">Mecze oczekujace potwierdzenia</div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Gra</th>
+                <th>Wynik</th>
+                <th>Przeciwnik</th>
+                <th>Status</th>
+                <th>Zwyciezca</th>
+                <th>Data</th>
+                <th>Potwierdź</th>
+                <th>Odrzuć</th>
+                <th>Komentarz</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for confirmation in confirmations %}
+                <tr>
+                    <td>{{ confirmation.match.game.name }}</td>
+                    <td>{{ confirmation.match.result }}</td>
+                    <td>{{ confirmation.match.author }}</td>
+                    <td>{{ confirmation.status }}</td>
+                    <td><b>{{ confirmation.match.winner }}</b></td>
+                    <td>{{ confirmation.match.date }}</td>
+                    <td>
+                        <input type="radio" name="{{ confirmation.id }}" value="confirmed">
+                    </td>
+                    <td>
+                        <input type="radio" name="{{ confirmation.id }}" value="rejected">
+                    </td>
+                    <td>
+                        <textarea name="{{ confirmation.id }}_com"></textarea>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" value="Zapisz"/>
+    </form>
+{% endblock %}
+
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block game_subpage %}#}
+{#    Mecze oczekujące Twojego potwierdzenia: <br/>#}
+{##}
+{#    <style>#}
+{#        table, th, td {#}
+{#            border: 1px solid #dddddd;#}
+{#            text-indent: initial;#}
+{#            text-align: center;#}
+{#            width: 100%;#}
+{#        }#}
+{##}
+{#    </style>#}
+{##}
+{#    <form action="" method="post">#}
+{#        {% csrf_token %}#}
+{#        <table>#}
+{#            <thead>#}
+{#            <tr>#}
+{#                <th>Gra</th>#}
+{#                <th>Wynik</th>#}
+{#                <th>Przeciwnik</th>#}
+{#                <th>Status</th>#}
+{#                <th>Zwyciezca</th>#}
+{#                <th>Potwierdź</th>#}
+{#                <th>Odrzuć</th>#}
+{#                <th>Komentarz</th>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody>#}
+{#            {% for confirmation in confirmations %}#}
+{#                <tr>#}
+{#                    <td>{{ confirmation.match.game.name }}</td>#}
+{#                    <td>{{ confirmation.match.result }}</td>#}
+{#                    <td>{{ confirmation.match.author }}</td>#}
+{#                    <td>{{ confirmation.status }}</td>#}
+{#                    <td><b>{{ confirmation.match.winner }}</b></td>#}
+{#                    <td>#}
+{#                        <input type="radio" name="{{ confirmation.id }}" value="confirmed">#}
+{#                    </td>#}
+{#                    <td>#}
+{#                        <input type="radio" name="{{ confirmation.id }}" value="rejected">#}
+{#                    </td>#}
+{#                    <td>#}
+{#                        <textarea name="{{ confirmation.id }}_com"></textarea>#}
+{#                    </td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#            </tbody>#}
+{#        </table>#}
+{#        <input type="submit" value="Zapisz"/>#}
+{#    </form>#}
+{##}
+{#{% endblock %}#}

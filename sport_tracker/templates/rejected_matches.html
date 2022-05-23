@@ -1,0 +1,64 @@
+{% extends 'home.html' %}
+{% load bootstrap5 %}
+{% block title %}
+    Mecze odrzucone
+{% endblock %}
+
+{% block game_subpage %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <table class="table table-bordered">
+            <thead>Odrzucone mecze
+            <tr>
+                <th>Gra</th>
+                <th>Wynik</th>
+                <th>Przeciwnik</th>
+                <th>Status</th>
+                <th>Zwyciezca</th>
+                <th>Komentarz</th>
+                <th>Data</th>
+                <th>Odrzucony przez użytkownika</th>
+                <th>Akcja</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for rej in rejected %}
+                <tr style="color: green">
+                    <td>
+                        {{ rej.match.game.name }}
+                    </td>
+                    <td>{{ rej.match.result }}</td>
+                    <td>
+                        {% if user == rej.match.opponent %}
+                            {{ rej.match.author }}
+                        {% else %}
+                            {{ rej.match.opponent }}
+                        {% endif %}
+                    </td>
+                    <td>{{ rej.status }}</td>
+                    <td><b>{{ rej.match.winner }}</b></td>
+                    <td>{{ rej.comment }}</td>
+                    <td>{{ rej.match.date }}</td>
+                    <td>{{ rej.rejected_by }}</td>
+                    <td>
+                        {#                        <button class="btn  btn-info">#}
+                        {#                            <input type="submit" class="btn" name="{{ rej.id }}" value="Ponów"/>#}
+                        {#                        </button>#}
+                        {#                        <br/>#}
+                        {#                        <button class="btn  btn-info">#}
+                        {#                            <input type="submit" class="btn" name="#" value="Edytuj"/>#}
+                        {#                        </button>#}
+                        {#                        <button class="btn  btn-info">#}
+                        <a href="{% url 'message_about_match' pk=rej.match.opponent.id rej=rej.id %}">
+                            Chat</a>
+                        {#                        </button>#}
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+    </form>
+{% endblock %}
