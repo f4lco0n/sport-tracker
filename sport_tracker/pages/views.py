@@ -1,13 +1,13 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.http.response import HttpResponse
+import xlwt
 
 from game.models import SportGame, Match, Confirmation, ConfirmationMessage
-from django.shortcuts import render, redirect, get_object_or_404
-from .forms import MatchForm, ConfirmationMessageForm
-
+from .forms import MatchForm, ConfirmationMessageForm, StatisticExportForm
 from . import utils
 
 
@@ -89,16 +89,17 @@ def create_match(request):
 @login_required
 def show_stats(request):
     user = request.user
-    game_details = utils.get_user_details_in_each_game(user)  # todo refactor - no need to assign to variables
-    all_matches = utils.get_user_played_matches_number(user)
-    won_matches = utils.get_user_won_matches_number(user)
-    lost_matches = utils.get_user_lost_matches_number(user)
-    pending_confirmations = utils.get_user_pending_confirmation_matches_number(user)
-    return render(request, "stats.html", {"all_matches": all_matches,
-                                          "won_matches": won_matches,
-                                          "lost_matches": lost_matches,
-                                          "pending_confirmations": pending_confirmations,
-                                          "game_details": game_details})
+    # game_details = utils.get_user_details_in_each_game(user)  # todo refactor - no need to assign to variables
+    # all_matches = utils.get_user_played_matches_number(user)
+    # won_matches = utils.get_user_won_matches_number(user)
+    # lost_matches = utils.get_user_lost_matches_number(user)
+    # pending_confirmations = utils.get_user_pending_confirmation_matches_number(user)
+    return render(request, "stats.html", {"all_matches": utils.get_user_played_matches_number(user),
+                                          "won_matches": utils.get_user_won_matches_number(user),
+                                          "lost_matches": utils.get_user_lost_matches_number(user),
+                                          "pending_confirmations": utils.get_user_pending_confirmation_matches_number(
+                                              user),
+                                          "game_details": utils.get_user_details_in_each_game(user)})
 
 
 @login_required
@@ -118,3 +119,58 @@ def message_about_match(request, pk, rej):
                                                         "rejection": rejection,
                                                         "form": form,
                                                         "messages": match_messages})
+
+@login_required
+def renew_match(request, pk, rej):
+    user = User.objects.get(id=pk)
+    rejection = Confirmation.objects.get(id=rej)
+
+    if request.method == "POST":
+        rejection.status = Confirmation.STATUS_PENDING_CONFIRMATION
+        #  todo remove confirmation messages
+        rejection.save()
+        return redirect("rejected_matches")
+    return render(request, "renew_match.html", {
+        "user": user, "rejection": rejection
+    })
+
+
+@login_required
+def export_view(request):
+    form = StatisticExportForm
+    if request.method == "POST":
+        form = StatisticExportForm(data=request.POST)
+        if form.is_bound and form.is_valid():
+            return export_stats(form, request.user)
+    return render(request, "export_stats.html", {"form": form})
+
+
+def export_stats(form, user):
+    timestamp = utils.get_timestamp()
+    response = HttpResponse(content='application/ms-excel')
+    response['Content-Disposition'] = f'attachment; filename="stats-{timestamp}.xls"'
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet("Stats")
+    date_from = form.data.get('date_from', "")
+    date_to = form.data.get('date_to', "")
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = [
+        "Rozegrane mecze", "Mecze wygrane", "Mecze przegrane"
+    ]
+
+    for col_num in range(len(columns)):
+        ws.write(0, col_num, columns[col_num], font_style)
+
+    ws.write(1, 0, utils.get_user_played_matches_number(user), font_style)
+    ws.write(1, 1, utils.get_user_won_matches_number(user), font_style)
+    ws.write(1, 2, utils.get_user_lost_matches_number(user), font_style)
+
+    wb.save(response)
+    return response
+    # user = request.user
+    # game_details = utils.get_user_details_in_each_game(user)  # todo refactor - no need to assign to variables
+    # all_matches = utils.get_user_played_matches_number(user)
+    # won_matches = utils.get_user_won_matches_number(user)
+    # lost_matches = utils.get_user_lost_matches_number(user)
+    # pending_confirmations = utils.get_user_pending_confirmation_matches_number(user)

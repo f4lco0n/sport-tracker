@@ -24,32 +24,25 @@
         <div class="row content">
             <div class="col-sm-2 sidenav">
                 <p><a href="{% url 'home' %}">Strona główna</a></p>
-                <p><a href="{% url 'login' %}">Login</a></p>
+                {% if not user.is_authenticated %}
+                    <p><a href="{% url 'login' %}">Login</a></p>
 
-                <p><a href="{% url 'register' %}">Rejestracja</a></p>
-                {% if user.is_authenticated %}
-                    <p><a href="{% url 'logout' %}">Wyloguj</a></p>
+                    <p><a href="{% url 'register' %}">Rejestracja</a></p>
                 {% endif %}
                 {% if user.is_authenticated %}
                     <p><a href="{% url 'matches' %}">Moje mecze</a></p>
-{#                    <p>#}
-{#                        <a href="{% url 'confirmations' %}">#}
-{#                            Mecze do potwierdzenia#}
-{#                        </a>#}
-{#                        {% if to_confirm %}#}
-{#                            <span class="circle">{{ to_confirm }}</span>#}
-{#                        {% endif %}#}
-{#                    </p>#}
-{#                    <p><a href="{% url 'rejected_matches' %}">Mecze odrzucone</a></p>#}
-
-{#                    <p><a href="{% url 'new_match' %}">Nowy mecz</a></p>#}
                     <p><a href="{% url 'stats' %}">Statystyki</a></p>
-                    <p><a href="#">Eksport</a></p>
+                    <p><a href="{% url 'exports' %}">Eksport</a></p>
+                    <p><a href="{% url 'logout' %}">Wyloguj</a></p>
                 {% endif %}
             </div>
             <div class="col-sm-10">
                 {% block game_subpage %}
-                    Tutaj bedzie mogl byc opis o czym to jest
+                    Witaj w mojej aplikacji!
+                    Jest to miejsce gdzie zapiszesz wyniki dowolnej rozgrywki z Twoim rywalem. Możesz wybierać
+                    dyscypliny, zapisywać wyniki spotkań, badać statystyki, zapraszać znajomych a nawet rywalizować o
+                    najlepszy wynik wśród znajomych!
+
                 {% endblock %}
             </div>
         </div>

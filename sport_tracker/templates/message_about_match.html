@@ -35,6 +35,7 @@
             <th>Zwyciezca</th>
             <th>Data</th>
             <th>Komentarz</th>
+            <th>Akcja</th>
         </tr>
         </thead>
         <tbody>
@@ -52,6 +53,8 @@
             <td><b>{{ rejection.match.winner }}</b></td>
             <td>{{ rejection.match.date }}</td>
             <td>{{ rejection.comment }}</td>
+            <td><a href="{% url 'renew_match' pk=rejection.match.opponent.id rej=rejection.id %}" class="btn btn-info"
+                   role="button" aria-pressed="true">Ponów</a></td>
         </tbody>
     </table>
 

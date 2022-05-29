@@ -38,3 +38,8 @@ class ConfirmationMessageForm(forms.Form):
         "cols": 40,
         "class": "form-control"
     }))
+
+
+class StatisticExportForm(forms.Form):
+    date_from = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    date_to = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)

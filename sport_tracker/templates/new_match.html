@@ -11,8 +11,23 @@
             <button class="btn btn-info">
                 <input class="btn" type="submit" value="Dodaj"/>
             </button>
-
         </p>
     </form>
+    <hr>
+    Drugi form
+    <div class="container">
+        {#        <div class="row">#}
+        {% for field in form %}
+            {% if field.name == 'game' or field.name == 'result' %}
+                <div class="row">
+                    <b>{{ field.label_tag }}</b> - {{ field }}
+                </div>
+            {% else %}
+                <b>{{ field.label_tag }}</b> - {{ field }}
+            {% endif %}
+
+        {% endfor %}
+        {#        </div>#}
+    </div>
 {% endblock %}
 
