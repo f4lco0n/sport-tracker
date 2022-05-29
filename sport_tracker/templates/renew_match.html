@@ -5,13 +5,17 @@
 {% endblock %}
 {% block game_subpage %}
     <h2>Czy na pewno chcesz ponowić ten mecz?</h2>
+    {#    <form action="{% url 'renew_match' pk=rejection.match.opponent.id rej=rejection.id %}" method="post">#}
+    {#        {% csrf_token %}#}
+    {#        <div class="col-md-4" style="float: none; margin: auto">#}
+    {#            <a href="{% url 'message_about_match' pk=rejection.match.opponent.id rej=rejection.id %}"#}
+    {#               class="btn btn-info" role="button" aria-pressed="true">Cofnij</a>#}
+    {#            <input class="btn btn-danger" type="submit" value="Ponów">#}
+    {#        </div>#}
+    {#    </form>#}
     <form action="{% url 'renew_match' pk=rejection.match.opponent.id rej=rejection.id %}" method="post">
         {% csrf_token %}
-        <div class="col-md-4" style="float: none; margin: auto">
-            <a href="{% url 'message_about_match' pk=rejection.match.opponent.id rej=rejection.id %}"
-               class="btn btn-info" role="button" aria-pressed="true">Cofnij</a>
-            <input class="btn btn-danger" type="submit" value="Ponów">
-        </div>
-
+        {{ form.as_p }}
+        <input class="btn btn-info" type="submit" value="Edytuj">
     </form>
 {% endblock %}

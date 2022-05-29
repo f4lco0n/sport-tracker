@@ -7,7 +7,7 @@ from django.http.response import HttpResponse
 import xlwt
 
 from game.models import SportGame, Match, Confirmation, ConfirmationMessage
-from .forms import MatchForm, ConfirmationMessageForm, StatisticExportForm
+from .forms import MatchForm, ConfirmationMessageForm, StatisticExportForm, RenewMatchForm
 from . import utils
 
 
@@ -89,11 +89,6 @@ def create_match(request):
 @login_required
 def show_stats(request):
     user = request.user
-    # game_details = utils.get_user_details_in_each_game(user)  # todo refactor - no need to assign to variables
-    # all_matches = utils.get_user_played_matches_number(user)
-    # won_matches = utils.get_user_won_matches_number(user)
-    # lost_matches = utils.get_user_lost_matches_number(user)
-    # pending_confirmations = utils.get_user_pending_confirmation_matches_number(user)
     return render(request, "stats.html", {"all_matches": utils.get_user_played_matches_number(user),
                                           "won_matches": utils.get_user_won_matches_number(user),
                                           "lost_matches": utils.get_user_lost_matches_number(user),
@@ -120,18 +115,25 @@ def message_about_match(request, pk, rej):
                                                         "form": form,
                                                         "messages": match_messages})
 
+
 @login_required
 def renew_match(request, pk, rej):
     user = User.objects.get(id=pk)
     rejection = Confirmation.objects.get(id=rej)
-
+    match = Match.objects.get(id=rejection.match.id)
+    form = RenewMatchForm(initial={"result": match.result, "winner": match.winner})
     if request.method == "POST":
-        rejection.status = Confirmation.STATUS_PENDING_CONFIRMATION
-        #  todo remove confirmation messages
-        rejection.save()
-        return redirect("rejected_matches")
+        form = RenewMatchForm(data=request.POST)
+        if form.is_valid():
+            match.result = form.cleaned_data["result"]
+            match.winner = User.objects.get(username=form.cleaned_data["winner"])
+            rejection.status = Confirmation.STATUS_PENDING_CONFIRMATION
+            #  todo remove confirmation messages
+            match.save()
+            rejection.save()
+            return redirect("rejected_matches")
     return render(request, "renew_match.html", {
-        "user": user, "rejection": rejection
+        "user": user, "rejection": rejection, "form": form
     })
 
 
@@ -168,9 +170,3 @@ def export_stats(form, user):
 
     wb.save(response)
     return response
-    # user = request.user
-    # game_details = utils.get_user_details_in_each_game(user)  # todo refactor - no need to assign to variables
-    # all_matches = utils.get_user_played_matches_number(user)
-    # won_matches = utils.get_user_won_matches_number(user)
-    # lost_matches = utils.get_user_lost_matches_number(user)
-    # pending_confirmations = utils.get_user_pending_confirmation_matches_number(user)

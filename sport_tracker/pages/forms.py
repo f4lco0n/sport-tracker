@@ -32,6 +32,17 @@ class MatchForm(forms.Form):
         ))
 
 
+class RenewMatchForm(forms.Form):
+    result = forms.CharField(help_text='Wynik powinien być przedzielony ":"', label="Wynik", widget=forms.TextInput(
+        attrs={"rows": 1, "class": "form-control", "placeholder": "0:0"}))
+    winner = forms.ModelChoiceField(
+        label="Zwycięzca",
+        queryset=User.objects.all(),
+        widget=forms.Select(
+            attrs={"placeholder": "Opponent", "class": "form-control"}
+        ))
+
+
 class ConfirmationMessageForm(forms.Form):
     message = forms.CharField(label="Wiadomości", max_length=1000, widget=forms.Textarea(attrs={
         "rows": 3,
