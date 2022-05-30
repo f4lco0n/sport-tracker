@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.http.response import HttpResponse
+from django.contrib import messages
 import xlwt
 
 from game.models import SportGame, Match, Confirmation, ConfirmationMessage
@@ -64,18 +65,19 @@ def create_match(request):
     form = MatchForm(request.user)
     if request.method == "POST":
         form = MatchForm(request.user, data=request.POST)
-        if form.is_valid():  # todo clean this
-            form_game = form.cleaned_data["game"]
+        if form.is_valid():
             result = form.cleaned_data["result"]
-            opponent = form.cleaned_data["opponent"]
-            game = SportGame.objects.get(name=form_game)
-            opponent_object = User.objects.get(username=opponent)
-            winner = form.cleaned_data["winner"]
-            winner_object = User.objects.get(username=winner)
+            game = SportGame.objects.get(name=form.cleaned_data["game"])
+            opponent = User.objects.get(username=form.cleaned_data["opponent"])
+            winner = User.objects.get(username=form.cleaned_data["winner"])
+            if (winner != opponent) and (winner != request.user):
+                messages.error(request, "Zwycięzcą musi być autor meczu lub przeciwnik")
+                form = MatchForm(request.user, initial={"result": result, "game": game})
+                return render(request, "new_match.html", {"form": form})
             match = Match(author=request.user,
                           game=game, result=result,
-                          opponent=opponent_object,
-                          winner=winner_object
+                          opponent=opponent,
+                          winner=winner
                           )
             match.save()
             confirmation = Confirmation(match=match, status=Confirmation.STATUS_PENDING_CONFIRMATION)

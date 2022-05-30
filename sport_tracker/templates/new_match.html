@@ -7,6 +7,13 @@
     <form method="post" action="." enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
         <p>
             <button class="btn btn-info">
                 <input class="btn" type="submit" value="Dodaj"/>
