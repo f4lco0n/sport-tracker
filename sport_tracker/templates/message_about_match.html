@@ -23,7 +23,12 @@
             color: #aaa;
         }
     </style>
-    Wiadomość dla użytkownika: <b>{{ to_user.username }}</b>
+    Wiadomość dla użytkownika:
+    {% if user == rejection.match.opponent %}
+        {{ rejection.match.author }}
+    {% else %}
+        {{ rejection.match.opponent }}
+    {% endif %}
     <br/>
     <table class="table table-bordered">
         <thead>
@@ -38,6 +43,7 @@
             <th>Akcja</th>
         </tr>
         </thead>
+
         <tbody>
         <tr>
             <td>{{ rejection.match.game.name }}</td>

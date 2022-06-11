@@ -24,73 +24,60 @@
         </thead>
         <tbody>
         {% for confirmation in confirmations %}
-            <tr style="color: green">
-                <td>
-                    {{ confirmation.match.game.name }}
-                </td>
-                <td>{{ confirmation.match.result }}</td>
-                <td>
-                    {% if user == confirmation.match.opponent %}
-                        {{ confirmation.match.author }}
-                    {% else %}
-                        {{ confirmation.match.opponent }}
-                    {% endif %}
-                </td>
-                <td>{{ confirmation.status }}</td>
-                <td>{{ confirmation.match.winner }}</td>
-                <td>{{ confirmation.match.date }}</td>
-            </tr>
+            {% if user == confirmation.match.winner and confirmation.status == "Zatwierdzony" %}
+                <tr style="color: green">
+                    <td>
+                        {{ confirmation.match.game.name }}
+                    </td>
+                    <td>{{ confirmation.match.result }}</td>
+                    <td>
+                        {% if user == confirmation.match.opponent %}
+                            {{ confirmation.match.author }}
+                        {% else %}
+                            {{ confirmation.match.opponent }}
+                        {% endif %}
+                    </td>
+                    <td>{{ confirmation.status }}</td>
+                    <td>{{ confirmation.match.winner }}</td>
+                    <td>{{ confirmation.match.date }}</td>
+                </tr>
+            {% elif user != confirmation.match.winner and confirmation.status == "Zatwierdzony" %}
+                <tr style="color: red">
+                    <td>
+                        {{ confirmation.match.game.name }}
+                    </td>
+                    <td>{{ confirmation.match.result }}</td>
+                    <td>
+                        {% if user == confirmation.match.opponent %}
+                            {{ confirmation.match.author }}
+                        {% else %}
+                            {{ confirmation.match.opponent }}
+                        {% endif %}
+                    </td>
+                    <td>{{ confirmation.status }}</td>
+                    <td>{{ confirmation.match.winner }}</td>
+                    <td>{{ confirmation.match.date }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>
+                        {{ confirmation.match.game.name }}
+                    </td>
+                    <td>{{ confirmation.match.result }}</td>
+                    <td>
+                        {% if user == confirmation.match.opponent %}
+                            {{ confirmation.match.author }}
+                        {% else %}
+                            {{ confirmation.match.opponent }}
+                        {% endif %}
+                    </td>
+                    <td>{{ confirmation.status }}</td>
+                    <td>{{ confirmation.match.winner }}</td>
+                    <td>{{ confirmation.match.date }}</td>
+                </tr>
+            {% endif %}
 
         {% endfor %}
         </tbody>
     </table>
 {% endblock %}
-
-{#{% extends 'base.html' %}#}
-{##}
-{#{% block game_subpage %}#}
-{#    <style>#}
-{#        table, th, td {#}
-{#            border: 1px solid #dddddd;#}
-{#            text-indent: initial;#}
-{#            text-align: center;#}
-{#            width: 100%;#}
-{#        }#}
-{##}
-{#    </style>#}
-{#    <table>#}
-{#        <thead>Twoje mecze#}
-{#        <tr>#}
-{#            <th>Gra</th>#}
-{#            <th>Wynik</th>#}
-{#            <th>Przeciwnik</th>#}
-{#            <th>Status</th>#}
-{#            <th>Zwyciezca</th>#}
-{#        </tr>#}
-{#        </thead>#}
-{#        <tbody>#}
-{##}
-{#        {% for confirmation in confirmations %}#}
-{#            <tr style="color: green">#}
-{#                <td>#}
-{#                    {{ confirmation.match.game.name }}#}
-{#                </td>#}
-{#                <td>{{ confirmation.match.result }}</td>#}
-{#                <td>#}
-{#                    {% if user == confirmation.match.opponent %}#}
-{#                        {{ confirmation.match.author }}#}
-{#                    {% else %}#}
-{#                        {{ confirmation.match.opponent }}#}
-{#                    {% endif %}#}
-{#                </td>#}
-{#                <td>{{ confirmation.status }}</td>#}
-{#                <td>{{ confirmation.match.winner }}</td>#}
-{#            </tr>#}
-{##}
-{#        {% endfor %}#}
-{##}
-{#        </tbody>#}
-{##}
-{#    </table>#}
-{##}
-{#{% endblock %}#}

@@ -32,7 +32,6 @@ class Match(models.Model):
         on_delete=models.CASCADE,
         related_name="opponent"
     )
-    match_status = models.CharField(max_length=25, verbose_name="Match status")
     winner = models.ForeignKey(User, verbose_name="Wygrany", on_delete=models.CASCADE, related_name="match_winner")
     date = models.DateTimeField(default=datetime.now, blank=True)
 

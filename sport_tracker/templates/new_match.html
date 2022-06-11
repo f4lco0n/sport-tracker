@@ -4,14 +4,15 @@
     Nowy mecz
 {% endblock %}
 {% block game_subpage %}
+    {% include 'matches_item_actions.html' %}
     <form method="post" action="." enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
         {% if messages %}
             {% for message in messages %}
-            <div class="alert alert-danger" role="alert">
-                {{ message }}
-            </div>
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
             {% endfor %}
         {% endif %}
         <p>
@@ -20,21 +21,5 @@
             </button>
         </p>
     </form>
-    <hr>
-    Drugi form
-    <div class="container">
-        {#        <div class="row">#}
-        {% for field in form %}
-            {% if field.name == 'game' or field.name == 'result' %}
-                <div class="row">
-                    <b>{{ field.label_tag }}</b> - {{ field }}
-                </div>
-            {% else %}
-                <b>{{ field.label_tag }}</b> - {{ field }}
-            {% endif %}
-
-        {% endfor %}
-        {#        </div>#}
-    </div>
 {% endblock %}
 

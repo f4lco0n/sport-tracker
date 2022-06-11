@@ -42,19 +42,13 @@ def show_confirmations(request):
 @login_required
 def show_matches(request):
     confirmations = Confirmation.objects.filter(
-        (Q(match__author=request.user) | Q(match__opponent=request.user)) & ~Q(status=Confirmation.STATUS_REJECTED))
+        (Q(match__author=request.user) | Q(match__opponent=request.user)) & ~Q(
+            status=Confirmation.STATUS_REJECTED)).order_by("-match__date")
     return render(request, 'matches.html', {"confirmations": confirmations})
 
 
 @login_required
 def show_rejected_matches(request):
-    if request.method == "POST":
-        excluded_keys_list = ['csrfmiddlewaretoken', '_com']
-        for (rejection_id, name) in request.POST.items():
-            if any(exclude in rejection_id for exclude in excluded_keys_list):
-                continue
-            rejection = Confirmation.objects.get(id=rejection_id)
-            utils.set_confirmation_status(rejection, Confirmation.STATUS_PENDING_CONFIRMATION, rejection.comment)
     rejected_matches = Confirmation.objects.filter(
         (Q(match__author=request.user) | Q(match__opponent=request.user)) & Q(status=Confirmation.STATUS_REJECTED))
     return render(request, "rejected_matches.html", {"rejected": rejected_matches})
@@ -102,7 +96,6 @@ def show_stats(request):
 @login_required
 def message_about_match(request, pk, rej):
     form = ConfirmationMessageForm
-    user = User.objects.get(id=pk)
     rejection = Confirmation.objects.get(id=rej)
     match_messages = ConfirmationMessage.objects.filter(confirmation=rejection).order_by("-id")
     if request.method == "POST":
@@ -112,10 +105,8 @@ def message_about_match(request, pk, rej):
             confirmation_message = ConfirmationMessage(confirmation=rejection, message=message, author=request.user)
             confirmation_message.save()
             return redirect("message_about_match", pk, rej)
-    return render(request, "message_about_match.html", {"to_user": user,
-                                                        "rejection": rejection,
-                                                        "form": form,
-                                                        "messages": match_messages})
+    return render(request, "message_about_match.html",
+                  {"rejection": rejection, "form": form, "messages": match_messages})
 
 
 @login_required
@@ -123,20 +114,18 @@ def renew_match(request, pk, rej):
     user = User.objects.get(id=pk)
     rejection = Confirmation.objects.get(id=rej)
     match = Match.objects.get(id=rejection.match.id)
-    form = RenewMatchForm(initial={"result": match.result, "winner": match.winner})
+    form = RenewMatchForm(rejection.match.author, rejection.match.opponent,
+                          initial={"result": match.result, "winner": match.winner})
     if request.method == "POST":
         form = RenewMatchForm(data=request.POST)
         if form.is_valid():
             match.result = form.cleaned_data["result"]
             match.winner = User.objects.get(username=form.cleaned_data["winner"])
             rejection.status = Confirmation.STATUS_PENDING_CONFIRMATION
-            #  todo remove confirmation messages
             match.save()
             rejection.save()
             return redirect("rejected_matches")
-    return render(request, "renew_match.html", {
-        "user": user, "rejection": rejection, "form": form
-    })
+    return render(request, "renew_match.html", {"user": user, "rejection": rejection, "form": form})
 
 
 @login_required

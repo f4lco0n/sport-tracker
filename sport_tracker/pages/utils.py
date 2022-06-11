@@ -4,6 +4,11 @@ from game.models import Confirmation, Match
 from datetime import datetime
 
 
+def get_timestamp() -> str:
+    timestamp: datetime = datetime.now()
+    return timestamp.strftime('%Y-%m/%d-%H%M%S')
+
+
 def get_user_confirmations_number(user: User) -> int:
     return Confirmation.objects.filter(match__opponent=user, status=Confirmation.STATUS_PENDING_CONFIRMATION).count()
 
@@ -80,8 +85,3 @@ def get_user_pending_confirmation_matches_number(user: User) -> int:
     return Confirmation.objects.filter(
         (Q(match__author=user) | Q(match__opponent=user)) & Q(status=Confirmation.STATUS_PENDING_CONFIRMATION)
     ).count()
-
-
-def get_timestamp() -> str:
-    timestamp: datetime = datetime.now()
-    return timestamp.strftime('%Y-%m/%d-%H%M%S')

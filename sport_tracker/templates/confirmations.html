@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block game_subpage %}
+    {% include 'matches_item_actions.html' %}
     <div class="well">Mecze oczekujace potwierdzenia</div>
     <form action="" method="post">
         {% csrf_token %}

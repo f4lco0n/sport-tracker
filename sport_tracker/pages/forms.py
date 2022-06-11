@@ -1,5 +1,5 @@
 from django import forms
-from game.models import SportGame, Match
+from game.models import SportGame
 from django.contrib.auth.models import User
 
 
@@ -33,6 +33,11 @@ class MatchForm(forms.Form):
 
 
 class RenewMatchForm(forms.Form):
+    def __init__(self, author, opponent, *args, **kwargs):
+        super(RenewMatchForm, self).__init__(*args, **kwargs)
+        pk_list = [author.id, opponent.id]
+        self.fields["winner"].queryset = User.objects.filter(pk__in=pk_list)
+
     result = forms.CharField(help_text='Wynik powinien być przedzielony ":"', label="Wynik", widget=forms.TextInput(
         attrs={"rows": 1, "class": "form-control", "placeholder": "0:0"}))
     winner = forms.ModelChoiceField(

@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block game_subpage %}
+    {% include 'matches_item_actions.html' %}
     <form action="" method="post">
         {% csrf_token %}
         <table class="table table-bordered">
@@ -23,7 +24,7 @@
             </thead>
             <tbody>
             {% for rej in rejected %}
-                <tr style="color: green">
+                <tr>
                     <td>
                         {{ rej.match.game.name }}
                     </td>
@@ -41,15 +42,8 @@
                     <td>{{ rej.match.date }}</td>
                     <td>{{ rej.rejected_by }}</td>
                     <td>
-                        {#                        <button class="btn  btn-info">#}
-                        {#                            <input type="submit" class="btn" name="{{ rej.id }}" value="Ponów"/>#}
-                        {#                        </button>#}
-                        {#                        <br/>#}
-                        {#                        <button class="btn  btn-info">#}
-                        {#                            <input type="submit" class="btn" name="#" value="Edytuj"/>#}
-                        {#                        </button>#}
-                        {#                        <button class="btn  btn-info">#}
-                        <a href="{% url 'message_about_match' pk=rej.match.opponent.id rej=rej.id %}" class="btn btn-info">
+                        <a href="{% url 'message_about_match' pk=rej.match.opponent.id rej=rej.id %}"
+                           class="btn btn-info">
                             Chat</a>
                         {#                        </button>#}
                     </td>
