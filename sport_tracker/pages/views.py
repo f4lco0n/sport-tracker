@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.http.response import HttpResponse
 from django.contrib import messages
 import xlwt
+from datetime import datetime
 
 from game.models import SportGame, Match, Confirmation, ConfirmationMessage
 from .forms import MatchForm, ConfirmationMessageForm, StatisticExportForm, RenewMatchForm
@@ -140,7 +141,7 @@ def export_view(request):
 
 def export_stats(form, user):
     timestamp = utils.get_timestamp()
-    response = HttpResponse(content='application/ms-excel')
+    response = HttpResponse(content_type='application/ms-excel')
     response['Content-Disposition'] = f'attachment; filename="stats-{timestamp}.xls"'
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet("Stats")
@@ -149,15 +150,22 @@ def export_stats(form, user):
     font_style = xlwt.XFStyle()
     font_style.font.bold = True
     columns = [
-        "Rozegrane mecze", "Mecze wygrane", "Mecze przegrane"
+        "Rozegrane mecze", "Mecze wygrane", "Mecze przegrane", "% wygranych meczy", "% przegranych meczy"
     ]
 
     for col_num in range(len(columns)):
         ws.write(0, col_num, columns[col_num], font_style)
 
-    ws.write(1, 0, utils.get_user_played_matches_number(user), font_style)
-    ws.write(1, 1, utils.get_user_won_matches_number(user), font_style)
-    ws.write(1, 2, utils.get_user_lost_matches_number(user), font_style)
+    ws.write(1, 0, utils.stats_played_matches(user, date_from, date_to), font_style)
+    ws.write(1, 1, utils.stats_won_matches(user, date_from, date_to), font_style)
+    ws.write(1, 2, utils.stats_lost_matches(user, date_from, date_to), font_style)
+    ws.write(1, 3,
+             (utils.stats_won_matches(user, date_from, date_to) / utils.stats_played_matches(user, date_from,
+                                                                                             date_to)) * 100,
+             font_style)
+    ws.write(1, 4, (utils.stats_lost_matches(user, date_from, date_to) / utils.stats_played_matches(user, date_from,
+                                                                                                    date_to)) * 100,
+             font_style)
 
     wb.save(response)
     return response

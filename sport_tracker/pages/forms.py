@@ -57,5 +57,5 @@ class ConfirmationMessageForm(forms.Form):
 
 
 class StatisticExportForm(forms.Form):
-    date_from = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
-    date_to = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    date_from = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False, label="Data od")
+    date_to = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False, label="Data do")

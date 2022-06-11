@@ -85,3 +85,33 @@ def get_user_pending_confirmation_matches_number(user: User) -> int:
     return Confirmation.objects.filter(
         (Q(match__author=user) | Q(match__opponent=user)) & Q(status=Confirmation.STATUS_PENDING_CONFIRMATION)
     ).count()
+
+
+def stats_played_matches(user: User, date_from: None, date_to: None):
+    matches = Match.objects.filter(Q(author=user) | Q(opponent=user))
+    if date_from:
+        matches = matches.filter(date__gte=date_from)
+    if date_to:
+        matches = matches.filter(date__lte=date_to)
+    return matches.count()
+
+
+def stats_won_matches(user: User, date_from: None, date_to: None):
+    won_matches = Confirmation.objects.filter(
+        Q(match__winner=user) & ~Q(status=Confirmation.STATUS_PENDING_CONFIRMATION) & ~Q(
+            status=Confirmation.STATUS_REJECTED))
+    if date_from:
+        won_matches = won_matches.filter(match__date__gte=date_from)
+    if date_to:
+        won_matches = won_matches.filter(match__date__lte=date_to)
+    return won_matches.count()
+
+
+def stats_lost_matches(user: User, date_from: None, date_to: None):
+    lost_matches = Confirmation.objects.filter(
+        ~Q(match__winner=user) & ~Q(status=Confirmation.STATUS_PENDING_CONFIRMATION))
+    if date_from:
+        lost_matches = lost_matches.filter(match__date__gte=date_from)
+    if date_to:
+        lost_matches = lost_matches.filter(match__date__lte=date_to)
+    return lost_matches.count()
