@@ -118,7 +118,7 @@ def renew_match(request, pk, rej):
     form = RenewMatchForm(rejection.match.author, rejection.match.opponent,
                           initial={"result": match.result, "winner": match.winner})
     if request.method == "POST":
-        form = RenewMatchForm(data=request.POST)
+        form = RenewMatchForm(rejection.match.author, rejection.match.opponent, data=request.POST)
         if form.is_valid():
             match.result = form.cleaned_data["result"]
             match.winner = User.objects.get(username=form.cleaned_data["winner"])

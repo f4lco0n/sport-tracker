@@ -59,7 +59,7 @@
             <td><b>{{ rejection.match.winner }}</b></td>
             <td>{{ rejection.match.date }}</td>
             <td>{{ rejection.comment }}</td>
-            <td><a href="{% url 'renew_match' pk=rejection.match.opponent.id rej=rejection.id %}" class="btn btn-info"
+            <td><a href="{% url 'renew_match' pk=rejection.match.author.id rej=rejection.id %}" class="btn btn-info"
                    role="button" aria-pressed="true">Edytuj</a></td>
         </tbody>
     </table>
